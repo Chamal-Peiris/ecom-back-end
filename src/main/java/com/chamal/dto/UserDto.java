@@ -9,6 +9,7 @@ import java.util.Set;
 public class UserDto implements Serializable {
     private String username;
     private String password;
+
     private List<UserRole> userRole;
     public String getUsername() {
         return username;

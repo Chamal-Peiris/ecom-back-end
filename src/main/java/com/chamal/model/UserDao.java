@@ -13,6 +13,7 @@ public class UserDao {
     private long id;
     @Column
     private String username;
+
     @Column
     @JsonIgnore
     private String password;
@@ -20,8 +21,8 @@ public class UserDao {
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-
     private Set<UserRole> role;
+
     public String getUsername() {
         return username;
     }
