@@ -4,31 +4,36 @@ import com.chamal.constant.UserRole;
 import com.chamal.model.UserDao;
 import com.chamal.dto.UserDto;
 import com.chamal.repository.UserRepository;
+import com.chamal.service.exception.DuplicateRecordException;
+import com.chamal.service.exception.NotFoundException;
+import com.chamal.service.util.EntityDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 	@Autowired
-	private UserRepository userDao;
+	private UserRepository userRepository;
 
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
 
+	@Autowired
+	private EntityDtoConverter converter;
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserDao user = userDao.findByUsername(username);
+		UserDao user = userRepository.findByUsername(username);
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
@@ -40,6 +45,22 @@ public class JwtUserDetailsService implements UserDetailsService {
 				authorities
 		);
 	}
+
+
+	public UserDao getLoggedUser() {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		Object principal = authentication.getPrincipal();
+		UserDao userDao = null;
+		if (principal instanceof UserDetails) {
+			UserDetails userDetails = (UserDetails) principal;
+			String username = userDetails.getUsername();
+			userDao = userRepository.findByUsername(username);
+		}
+		if(userDao==null) throw new NotFoundException("No logged in user found");
+		return userDao;
+	}
 	private List<GrantedAuthority> getAuthorities(Set<UserRole> roles) {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		for (UserRole role : roles) {
@@ -48,10 +69,32 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return authorities;
 	}
 	public UserDao save(UserDto user) {
+
+		if(userRepository.findByUsername(user.getUsername())!=null){
+			throw new DuplicateRecordException("Username already exists");
+		}
+
 		UserDao newUser = new UserDao();
 		newUser.setUsername(user.getUsername());
 		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
 		newUser.setRole(new HashSet<>(user.getUserRole()));
-		return userDao.save(newUser);
+		return userRepository.save(newUser);
+	}
+
+	public UserDto getUser(Long userId){
+
+		Optional<UserDao> userDao = userRepository.findById(userId);
+
+		if(!userDao.isPresent()) throw new NotFoundException("No User Found for the given id");
+		return converter.getUserDto(userDao.get());
+	}
+
+	public List<UserDto> getUsers(){
+		List<UserDao> userList = userRepository.findAll();
+
+		if(userList.isEmpty()) throw new NotFoundException("No Users found in the database");
+
+		return userList.stream().map(userDao -> converter.getUserDto(userDao)).collect(Collectors.toList());
+
 	}
 }

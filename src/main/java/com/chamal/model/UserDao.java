@@ -22,7 +22,6 @@ public class UserDao {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Set<UserRole> role;
-
     public String getUsername() {
         return username;
     }

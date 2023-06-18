@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -22,8 +24,11 @@ public class CustomerDao {
 
     private String mobile;
 
-    private String adddress;
-    @ManyToOne
+    private String address;
+    @OneToOne
     @JoinColumn(name = "user_id")
     private UserDao userDao;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<OrderDao> orderDaos=new HashSet<>();
 }
