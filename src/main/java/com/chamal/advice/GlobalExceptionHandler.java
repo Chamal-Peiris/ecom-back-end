@@ -1,6 +1,7 @@
 package com.chamal.advice;
 
 import com.chamal.service.exception.DuplicateRecordException;
+import com.chamal.service.exception.GenericEcomException;
 import com.chamal.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,14 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        logger.error("Not Found exception occurred: {}", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(timestamp, HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(GenericEcomException.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(GenericEcomException e) {
         LocalDateTime timestamp = LocalDateTime.now();
         logger.error("Not Found exception occurred: {}", e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(timestamp, HttpStatus.BAD_REQUEST.value(), e.getMessage());

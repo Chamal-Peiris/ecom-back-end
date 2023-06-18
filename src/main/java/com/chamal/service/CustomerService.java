@@ -4,6 +4,7 @@ import com.chamal.dto.CustomerDto;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface CustomerService {

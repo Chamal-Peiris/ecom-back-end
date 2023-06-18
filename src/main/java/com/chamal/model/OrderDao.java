@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,5 +36,6 @@ public class OrderDao {
     @JoinColumn(name = "customer_id")
     private CustomerDao customer;
 
-
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private Set<OrderItemDao> orderItemDaos=new HashSet<>();
 }
