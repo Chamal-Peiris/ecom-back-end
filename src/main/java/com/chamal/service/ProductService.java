@@ -11,6 +11,5 @@ public interface ProductService {
      ProductDto getProduct(Long productId);
      List<ProductDto> getProducts();
 
-
      ProductDto updateStockAmount(Long productId,Long stockAmount);
 }
