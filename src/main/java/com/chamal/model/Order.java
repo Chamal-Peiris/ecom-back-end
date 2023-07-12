@@ -16,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "orders")
-public class OrderDao {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,8 +34,8 @@ public class OrderDao {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private CustomerDao customer;
+    private Customer customer;
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
-    private Set<OrderItemDao> orderItemDaos=new HashSet<>();
+    private Set<OrderItem> orderItemDaos=new HashSet<>();
 }

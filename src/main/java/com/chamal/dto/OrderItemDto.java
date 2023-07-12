@@ -1,12 +1,9 @@
 package com.chamal.dto;
 
-import com.chamal.model.OrderDao;
-import com.chamal.model.ProductDao;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Data

@@ -1,6 +1,5 @@
 package com.chamal.model;
 
-import com.chamal.dto.CustomerProductDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,17 +12,17 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "user_product")
-public class CustomerProductDao {
+public class CustomerProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private CustomerDao customerDao;
+    private Customer customerDao;
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private ProductDao productDao;
+    private Product productDao;
 
     @Column(name = "date_added")
     private Date dateAdded;

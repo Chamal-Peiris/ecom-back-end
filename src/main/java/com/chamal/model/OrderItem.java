@@ -1,26 +1,22 @@
 package com.chamal.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 
 @Entity
 @Table(name = "order_item")
-public class OrderItemDao {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    private OrderDao order;
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private ProductDao product;
+    private Product product;
 
     private int quantity;
 
@@ -34,19 +30,19 @@ public class OrderItemDao {
         this.id = id;
     }
 
-    public OrderDao getOrder() {
+    public Order getOrder() {
         return order;
     }
 
-    public void setOrder(OrderDao order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 
-    public ProductDao getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(ProductDao product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 

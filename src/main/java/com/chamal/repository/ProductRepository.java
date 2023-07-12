@@ -1,7 +1,7 @@
 package com.chamal.repository;
 
-import com.chamal.model.ProductDao;
+import com.chamal.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<ProductDao,Long> {
+public interface ProductRepository extends JpaRepository<Product,Long> {
 }

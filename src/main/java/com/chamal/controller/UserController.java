@@ -1,6 +1,6 @@
 package com.chamal.controller;
 
-import com.chamal.model.UserDao;
+import com.chamal.model.User;
 import com.chamal.service.JwtUserDetailsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping("/get-current-user")
-    public ResponseEntity getCurrentUser(UserDao userDao){
+    public ResponseEntity getCurrentUser(User userDao){
         return ResponseEntity.ok(userDao);
 
     }

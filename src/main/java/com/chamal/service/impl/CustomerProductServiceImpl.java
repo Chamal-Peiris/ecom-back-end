@@ -1,11 +1,9 @@
 package com.chamal.service.impl;
 
-import com.chamal.dto.CustomerDto;
 import com.chamal.dto.CustomerProductDto;
-import com.chamal.dto.ProductDto;
-import com.chamal.model.CustomerDao;
-import com.chamal.model.CustomerProductDao;
-import com.chamal.model.ProductDao;
+import com.chamal.model.Customer;
+import com.chamal.model.CustomerProduct;
+import com.chamal.model.Product;
 import com.chamal.repository.CustomerProductRepository;
 import com.chamal.service.CustomerProductService;
 import com.chamal.service.CustomerService;
@@ -38,21 +36,21 @@ public class CustomerProductServiceImpl implements CustomerProductService {
 
     @Override
     public CustomerProductDto saveCart(CustomerProductDto customerProductDto) {
-        CustomerDao customerDao = mapper.getCustomerDao(customerService.getCustomer(customerProductDto.getCustomerId()));
-        ProductDao productDao = mapper.getProductDao(productService.getProduct(customerProductDto.getProductId()));
+        Customer customerDao = mapper.getCustomerDao(customerService.getCustomer(customerProductDto.getCustomerId()));
+        Product productDao = mapper.getProductDao(productService.getProduct(customerProductDto.getProductId()));
 
         CustomerProductDto customerProductDto1 = null;
         if (productDao.getAvailableQuantity() < customerProductDto.getQuantity())
             throw new GenericEcomException("Requested stock amount is not available.");
 
-        CustomerProductDao customerProductDao = new CustomerProductDao();
+        CustomerProduct customerProductDao = new CustomerProduct();
         customerProductDao.setProductDao(productDao);
         customerProductDao.setCustomerDao(customerDao);
         customerProductDao.setQuantity(customerProductDto.getQuantity());
         customerProductDao.setDateAdded(new Date());
         customerProductDao.setPrice(customerProductDto.getPrice());
 
-        CustomerProductDao availableCpDao = customerProductRepository.findByCustomerDaoAndProductDao(customerDao, productDao);
+        CustomerProduct availableCpDao = customerProductRepository.findByCustomerDaoAndProductDao(customerDao, productDao);
 
         if (availableCpDao != null) {
             //Update cart
@@ -72,7 +70,7 @@ public class CustomerProductServiceImpl implements CustomerProductService {
 
     @Override
     public List<CustomerProductDto> getCustomerCart(Long customerId) {
-        List<CustomerProductDao> customerProductDaoList = customerProductRepository.findByCustomerDao(mapper.getCustomerDao(customerService.getCustomer(customerId)));
+        List<CustomerProduct> customerProductDaoList = customerProductRepository.findByCustomerDao(mapper.getCustomerDao(customerService.getCustomer(customerId)));
 
         if(customerProductDaoList.isEmpty()) throw new NotFoundException("No cart items for this customer");
         return customerProductDaoList.stream().map(cp->mapper.getCustomerProductDto(cp)).collect(Collectors.toList());
@@ -80,14 +78,14 @@ public class CustomerProductServiceImpl implements CustomerProductService {
 
     @Override
     public void removeProduct(Long customerId, Long productId) {
-        CustomerProductDao cpDao = customerProductRepository.findByCustomerDaoAndProductDao(mapper.getCustomerDao(customerService.getCustomer(customerId)), mapper.getProductDao(productService.getProduct(productId)));
+        CustomerProduct cpDao = customerProductRepository.findByCustomerDaoAndProductDao(mapper.getCustomerDao(customerService.getCustomer(customerId)), mapper.getProductDao(productService.getProduct(productId)));
         if(cpDao==null) throw new NotFoundException("No cart avaialble, either the given customer id or product id is wrong");
         customerProductRepository.delete(cpDao);
     }
 
     @Override
-    public List<CustomerProductDao> getCustomerProductDaos(Long customerId) {
-        List<CustomerProductDao> customerProductDaoList = customerProductRepository.findByCustomerDao(mapper.getCustomerDao(customerService.getCustomer(customerId)));
+    public List<CustomerProduct> getCustomerProductDaos(Long customerId) {
+        List<CustomerProduct> customerProductDaoList = customerProductRepository.findByCustomerDao(mapper.getCustomerDao(customerService.getCustomer(customerId)));
 
         if(customerProductDaoList.isEmpty()) throw new NotFoundException("No cart items for this customer");
         return customerProductDaoList;
@@ -96,11 +94,11 @@ public class CustomerProductServiceImpl implements CustomerProductService {
     @Override
     public void deleteCustomerCart(Long customerId) {
 
-        CustomerDao customerDao = mapper.getCustomerDao(customerService.getCustomer(customerId));
+        Customer customerDao = mapper.getCustomerDao(customerService.getCustomer(customerId));
 
         if (customerDao == null) throw new NotFoundException("No customer found with the given id");
 
-        List<CustomerProductDao> customerProductDaoList = customerProductRepository.findByCustomerDao(customerDao);
+        List<CustomerProduct> customerProductDaoList = customerProductRepository.findByCustomerDao(customerDao);
 
         if (customerProductDaoList.isEmpty()) throw new NotFoundException("No cart items for this customer");
 

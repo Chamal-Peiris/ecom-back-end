@@ -1,17 +1,12 @@
 package com.chamal.dto;
 
-import com.chamal.model.CustomerDao;
-import com.chamal.model.OrderDao;
-import com.chamal.model.OrderItemDao;
+import com.chamal.model.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -25,7 +20,7 @@ public class OrderDto implements Serializable {
     private boolean shipped;
     private CustomerDto customerDto;
 
-    public OrderDto(OrderDao orderDao,CustomerDto customerDto) {
+    public OrderDto(Order orderDao, CustomerDto customerDto) {
         this.id = orderDao.getId();
         this.orderPlacedDate = orderDao.getOrderPlacedDate();
         this.shippingAddress = orderDao.getShippingAddress();

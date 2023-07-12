@@ -1,7 +1,7 @@
 package com.chamal.service;
 
 import com.chamal.constant.UserRole;
-import com.chamal.model.UserDao;
+import com.chamal.model.User;
 import com.chamal.dto.UserDto;
 import com.chamal.repository.UserRepository;
 import com.chamal.service.exception.DuplicateRecordException;
@@ -33,7 +33,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 	private EntityDtoConverter converter;
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserDao user = userRepository.findByUsername(username);
+		User user = userRepository.findByUsername(username);
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
@@ -47,12 +47,12 @@ public class JwtUserDetailsService implements UserDetailsService {
 	}
 
 
-	public UserDao getLoggedUser() {
+	public User getLoggedUser() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		Object principal = authentication.getPrincipal();
-		UserDao userDao = null;
+		User userDao = null;
 		if (principal instanceof UserDetails) {
 			UserDetails userDetails = (UserDetails) principal;
 			String username = userDetails.getUsername();
@@ -68,13 +68,13 @@ public class JwtUserDetailsService implements UserDetailsService {
 		}
 		return authorities;
 	}
-	public UserDao save(UserDto user) {
+	public User save(UserDto user) {
 
 		if(userRepository.findByUsername(user.getUsername())!=null){
 			throw new DuplicateRecordException("Username already exists");
 		}
 
-		UserDao newUser = new UserDao();
+		User newUser = new User();
 		newUser.setUsername(user.getUsername());
 		newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
 		newUser.setRole(new HashSet<>(user.getUserRole()));
@@ -83,14 +83,14 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 	public UserDto getUser(Long userId){
 
-		Optional<UserDao> userDao = userRepository.findById(userId);
+		Optional<User> userDao = userRepository.findById(userId);
 
 		if(!userDao.isPresent()) throw new NotFoundException("No User Found for the given id");
 		return converter.getUserDto(userDao.get());
 	}
 
 	public List<UserDto> getUsers(){
-		List<UserDao> userList = userRepository.findAll();
+		List<User> userList = userRepository.findAll();
 
 		if(userList.isEmpty()) throw new NotFoundException("No Users found in the database");
 

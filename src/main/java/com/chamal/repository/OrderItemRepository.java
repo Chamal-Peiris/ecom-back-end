@@ -1,7 +1,7 @@
 package com.chamal.repository;
 
-import com.chamal.model.OrderItemDao;
+import com.chamal.model.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderItemRepository extends JpaRepository<OrderItemDao,Long> {
+public interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
 }

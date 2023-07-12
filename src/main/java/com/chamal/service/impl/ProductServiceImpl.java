@@ -1,7 +1,7 @@
 package com.chamal.service.impl;
 
 import com.chamal.dto.ProductDto;
-import com.chamal.model.ProductDao;
+import com.chamal.model.Product;
 import com.chamal.repository.ProductRepository;
 import com.chamal.service.JwtUserDetailsService;
 import com.chamal.service.ProductService;
@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
           savedDto =  mapper.getProductDto(productRepository.save(mapper.getProductDao(productDto)));
         }else{
             //Update
-            Optional<ProductDao> productDao = productRepository.findById(productDto.getId());
+            Optional<Product> productDao = productRepository.findById(productDto.getId());
 
             if(!productDao.isPresent()) throw new NotFoundException("No product is found for the given id");
             productDao.get().setProductName(productDto.getProductName());
@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProduct(Long productId) {
-        Optional<ProductDao> productDao = productRepository.findById(productId);
+        Optional<Product> productDao = productRepository.findById(productId);
 
         if (!productDao.isPresent()) throw new NotFoundException("No product is found for the given id");
 
@@ -62,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDto> getProducts() {
 
-        List<ProductDao> allProducts = productRepository.findAll();
+        List<Product> allProducts = productRepository.findAll();
         if (allProducts.isEmpty()) throw new NotFoundException("No products found");
 
         return allProducts.stream().map(productDao -> mapper.getProductDto(productDao)).collect(Collectors.toList());
@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto updateStockAmount(Long productId, Long stockAmount) {
-        Optional<ProductDao> productDao = productRepository.findById(productId);
+        Optional<Product> productDao = productRepository.findById(productId);
 
         if(!productDao.isPresent()) throw new NotFoundException("No product is found for the given id");
         productDao.get().setAvailableQuantity(stockAmount);

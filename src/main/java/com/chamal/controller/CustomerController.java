@@ -37,4 +37,9 @@ public class CustomerController {
         customerService.deleteCustomer(Long.parseLong(customerId));
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/me")
+    public ResponseEntity me(){
+        return ResponseEntity.ok(customerService.me());
+    }
 }

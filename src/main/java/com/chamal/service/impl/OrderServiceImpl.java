@@ -1,24 +1,19 @@
 package com.chamal.service.impl;
 
-import com.chamal.dto.CustomerProductDto;
 import com.chamal.dto.OrderDto;
-import com.chamal.model.CustomerDao;
-import com.chamal.model.CustomerProductDao;
-import com.chamal.model.OrderDao;
-import com.chamal.model.OrderItemDao;
+import com.chamal.model.Customer;
+import com.chamal.model.CustomerProduct;
+import com.chamal.model.Order;
+import com.chamal.model.OrderItem;
 import com.chamal.repository.OrderRepository;
 import com.chamal.service.CustomerProductService;
 import com.chamal.service.CustomerService;
 import com.chamal.service.OrderService;
-import com.chamal.service.exception.NotFoundException;
 import com.chamal.service.util.EntityDtoConverter;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import javax.management.remote.JMXPrincipal;
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -38,20 +33,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto placeOrder(OrderDto orderDto, Long customerId) {
-        CustomerDao customerDao = mapper.getCustomerDao(customerService.getCustomer(customerId));
-        OrderDao orderDao = new OrderDao();
+        Customer customerDao = mapper.getCustomerDao(customerService.getCustomer(customerId));
+        Order orderDao = new Order();
 
         orderDao.setOrderPlacedDate(new Date());
         orderDao.setCustomer(customerDao);
         orderDao.setShippingAddress(orderDto.getShippingAddress());
         orderDao.setShipped(false);
 
-        List<CustomerProductDao> cpDaoList = customerProductService.getCustomerProductDaos(customerId);
+        List<CustomerProduct> cpDaoList = customerProductService.getCustomerProductDaos(customerId);
 
-        Set<OrderItemDao> orderItemSet = new HashSet<>();
+        Set<OrderItem> orderItemSet = new HashSet<>();
         double totalPrice = 0;
-        for (CustomerProductDao cp : cpDaoList) {
-            OrderItemDao orderItemDao = new OrderItemDao();
+        for (CustomerProduct cp : cpDaoList) {
+            OrderItem orderItemDao = new OrderItem();
             orderItemDao.setProduct(cp.getProductDao());
             orderItemDao.setQuantity(cp.getQuantity());
             orderItemDao.setSoldPrice(cp.getPrice());
@@ -62,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderDao.setOrderItemDaos(orderItemSet);
         orderDao.setOrderTotal(totalPrice);
-        OrderDao savedOrder = orderRepository.save(orderDao);
+        Order savedOrder = orderRepository.save(orderDao);
 
         customerProductService.deleteCustomerCart(customerId);
 

@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "customer")
-public class CustomerDao {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -27,8 +27,8 @@ public class CustomerDao {
     private String address;
     @OneToOne
     @JoinColumn(name = "user_id")
-    private UserDao userDao;
+    private User userDao;
 
     @OneToMany(mappedBy = "customer")
-    private Set<OrderDao> orderDaos=new HashSet<>();
+    private Set<Order> orderDaos=new HashSet<>();
 }
