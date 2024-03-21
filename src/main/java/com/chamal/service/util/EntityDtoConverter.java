@@ -1,15 +1,14 @@
 package com.chamal.service.util;
 
-import com.chamal.dto.CustomerDto;
-import com.chamal.dto.CustomerProductDto;
-import com.chamal.dto.ProductDto;
-import com.chamal.dto.UserDto;
-import com.chamal.model.Customer;
-import com.chamal.model.CustomerProduct;
-import com.chamal.model.Product;
-import com.chamal.model.User;
+import com.chamal.dto.*;
+import com.chamal.model.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class EntityDtoConverter {
@@ -46,5 +45,17 @@ public class EntityDtoConverter {
     }
     public CustomerProductDto getCustomerProductDto(CustomerProduct customerProductDao) {
         return mapper.map(customerProductDao, CustomerProductDto.class);
+    }
+
+    public Set<OrderItemDto> getOrderItemnDtoList(Set<OrderItem> orderItems){
+        Set<OrderItemDto> orderItemDtoList = new HashSet<>();
+
+        for(OrderItem orderItem:orderItems){
+            orderItemDtoList.add(mapper.map(orderItem, OrderItemDto.class));
+        }
+        return orderItemDtoList;
+    }
+    public OrderDto getOrderDto(Order order) {
+        return mapper.map(order, OrderDto.class);
     }
 }

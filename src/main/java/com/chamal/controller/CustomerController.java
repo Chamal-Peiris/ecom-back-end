@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/api/v1/customer")
 public class CustomerController {
     private CustomerService customerService;
     public CustomerController(CustomerService customerService) {

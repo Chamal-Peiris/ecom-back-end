@@ -43,6 +43,8 @@ public class ProductServiceImpl implements ProductService {
             productDao.get().setBuyingPrice(productDto.getBuyingPrice());
             productDao.get().setSellingPrice(productDto.getSellingPrice());
             productDao.get().setAvailableQuantity(productDto.getAvailableQuantity());
+            productDao.get().setDescription(productDto.getDescription());
+            productDao.get().setImageBase64String(productDto.getImageBase64String());
 
           savedDto=  mapper.getProductDto(productRepository.save(productDao.get()));
 

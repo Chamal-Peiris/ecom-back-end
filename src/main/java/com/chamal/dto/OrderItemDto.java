@@ -13,8 +13,6 @@ public class OrderItemDto implements Serializable {
 
     private Long id;
 
-    private OrderDto order;
-
     private ProductDto product;
 
     private int quantity;

@@ -23,4 +23,8 @@ public class ProductDto implements Serializable {
     private double buyingPrice;
 
     private double sellingPrice;
+
+    private String description;
+
+    private String imageBase64String;
 }

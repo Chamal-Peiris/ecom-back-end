@@ -29,6 +29,6 @@ public class Customer {
     @JoinColumn(name = "user_id")
     private User userDao;
 
-    @OneToMany(mappedBy = "customer")
-    private Set<Order> orderDaos=new HashSet<>();
+//    @OneToMany(mappedBy = "customer")
+//    private Set<Order> orderDaos=new HashSet<>();
 }

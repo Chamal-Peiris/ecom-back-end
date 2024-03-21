@@ -3,6 +3,7 @@ package com.chamal.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -25,4 +26,9 @@ public class Product {
 
     @Column(name = "buying_price")
     private double sellingPrice;
+
+    private String description;
+
+    @Column(name="image_string")
+    private String imageBase64String;
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "user_product")
+@Table(name = "customer_product")
 public class CustomerProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

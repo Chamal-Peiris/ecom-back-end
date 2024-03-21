@@ -3,13 +3,10 @@ package com.chamal.controller;
 import com.chamal.dto.CustomerProductDto;
 import com.chamal.service.CustomerProductService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/api/v1/cart")
 public class CartController {
     private CustomerProductService customerProductService;
 
@@ -20,5 +17,22 @@ public class CartController {
     @PostMapping("/save")
     public ResponseEntity saveCart(@RequestBody CustomerProductDto customerProductDto){
         return ResponseEntity.ok(customerProductService.saveCart(customerProductDto));
+    }
+
+    @GetMapping("/get-customer-cart")
+    public ResponseEntity getCustomerCart(@RequestParam Long customerId){
+        return ResponseEntity.ok(customerProductService.getCustomerCart(customerId));
+    }
+
+    @DeleteMapping("/remove-product")
+    public ResponseEntity deleteCustomerCart(@RequestParam Long customerId,@RequestParam Long productId){
+        customerProductService.removeProduct(customerId,productId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/clear-cart")
+    public ResponseEntity deleteCustomerCart(@RequestParam Long customerId){
+        customerProductService.deleteCustomerCart(customerId);
+        return ResponseEntity.ok().build();
     }
 }

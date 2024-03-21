@@ -1,5 +1,6 @@
 package com.chamal.model;
 
+import com.chamal.constant.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,10 @@ public class Order {
     private double orderTotal;
 
     private boolean shipped;
+
+    @Column(name = "order_status")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
