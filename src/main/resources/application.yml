@@ -11,9 +11,9 @@ spring:
   profiles: default
 
   datasource:
-    url: jdbc:mysql://localhost:3306/ecomdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://54.179.42.252:3306/ecomdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
-    password: 12345678
+    password: 18Mar#2024
     platform: mysql
     initialization-mode: always
 
