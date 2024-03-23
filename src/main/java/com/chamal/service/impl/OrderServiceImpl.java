@@ -44,7 +44,9 @@ public class OrderServiceImpl implements OrderService {
 
         orderDao.setOrderPlacedDate(new Date());
         orderDao.setCustomer(customerDao);
-        orderDao.setShippingAddress(orderDto.getShippingAddress());
+        orderDao.setShippingAddress(orderDto.getAddress());
+        orderDao.setEmail(orderDto.getEmail());
+        orderDao.setFullName(orderDto.getFullName());
         orderDao.setShipped(false);
         orderDao.setOrderStatus(OrderStatus.PLACED);
 

@@ -33,6 +33,12 @@ public class Order {
 
     private boolean shipped;
 
+    @Column(name = "full_name")
+    private String fullName;
+
+
+    private String email;
+
     @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;

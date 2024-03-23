@@ -16,19 +16,23 @@ public class OrderDto implements Serializable {
 
     private Long id;
     private Date orderPlacedDate;
-    private String shippingAddress;
+    private String address;
     private double orderTotal;
     private boolean shipped;
+    private String fullName;
+    private String email;
     private CustomerDto customerDto;
     private OrderStatus orderStatus;
 
     public OrderDto(Order orderDao, CustomerDto customerDto) {
         this.id = orderDao.getId();
         this.orderPlacedDate = orderDao.getOrderPlacedDate();
-        this.shippingAddress = orderDao.getShippingAddress();
+        this.address = orderDao.getShippingAddress();
         this.orderTotal = orderDao.getOrderTotal();
         this.shipped = orderDao.isShipped();
         this.customerDto = customerDto;
         this.orderStatus=orderDao.getOrderStatus();
+        this.fullName=orderDao.getFullName();
+        this.email=orderDao.getEmail();
     }
 }

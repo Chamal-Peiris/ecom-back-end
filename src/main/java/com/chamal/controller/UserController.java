@@ -32,4 +32,12 @@ public class UserController {
     public ResponseEntity getUsers(){
         return ResponseEntity.ok(userService.getUsers());
     }
+
+    @GetMapping("/logged-user")
+    public ResponseEntity getLoggedInUser(){
+        return ResponseEntity.ok(userService.getLoggedUser());
+    }
+
+
+
 }

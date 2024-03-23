@@ -1,0 +1,46 @@
+jwt:
+  secret: techgeeknext
+
+spring:
+  profiles:
+    active: default
+
+---
+
+spring:
+  profiles: default
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecomdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 12345678
+    platform: mysql
+    initialization-mode: always
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+      enabled: true
+
+---
+
+spring:
+  profiles: test
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+  datasource:
+    url: jdbc:h2:~/test;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
+    username: sa
+    password:
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
