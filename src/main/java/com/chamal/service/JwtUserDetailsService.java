@@ -1,6 +1,8 @@
 package com.chamal.service;
 
 import com.chamal.constant.UserRole;
+import com.chamal.dto.CustomCustomerRegisterDto;
+import com.chamal.dto.CustomerDto;
 import com.chamal.model.User;
 import com.chamal.dto.UserDto;
 import com.chamal.repository.UserRepository;
@@ -8,6 +10,7 @@ import com.chamal.service.exception.DuplicateRecordException;
 import com.chamal.service.exception.NotFoundException;
 import com.chamal.service.util.EntityDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,6 +34,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 	@Autowired
 	private EntityDtoConverter converter;
+	@Autowired
+	private CustomerService customerService;
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUsername(username);
@@ -96,5 +101,14 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 		return userList.stream().map(userDao -> converter.getUserDto(userDao)).collect(Collectors.toList());
 
+	}
+	public CustomCustomerRegisterDto registerUserAndCustomer(CustomCustomerRegisterDto customCustomerRegisterDto){
+		User savedUser = save(customCustomerRegisterDto.getUser());
+		CustomerDto savedCustomerDto = customerService.saveCustomerForRegistration(customCustomerRegisterDto.getCustomer(),savedUser);
+
+		CustomCustomerRegisterDto savedCustomerDetails = new CustomCustomerRegisterDto();
+		savedCustomerDetails.setCustomer(savedCustomerDto);
+		savedCustomerDetails.setUser(new UserDto(savedUser));
+		return savedCustomerDetails;
 	}
 }

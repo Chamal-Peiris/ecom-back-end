@@ -1,6 +1,7 @@
 package com.chamal.dto;
 
 import com.chamal.constant.UserRole;
+import com.chamal.model.User;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +11,7 @@ public class UserDto implements Serializable {
     private String username;
     private String password;
 
-    private List<UserRole> userRole;
+    private Set<UserRole> userRole;
     public String getUsername() {
         return username;
     }
@@ -27,11 +28,22 @@ public class UserDto implements Serializable {
         this.password = password;
     }
 
-    public List<UserRole> getUserRole() {
+    public Set<UserRole> getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(List<UserRole> userRole) {
+    public UserDto() {
+    }
+
+    public UserDto(User user) {
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.userRole = user.getRole();
+    }
+
+    public void setUserRole(Set<UserRole> userRole) {
         this.userRole = userRole;
     }
+
+
 }

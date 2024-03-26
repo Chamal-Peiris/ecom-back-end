@@ -1,6 +1,7 @@
 package com.chamal.service.impl;
 
 import com.chamal.dto.CustomerProductDto;
+import com.chamal.dto.ProductDto;
 import com.chamal.model.Customer;
 import com.chamal.model.CustomerProduct;
 import com.chamal.model.Product;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,5 +105,35 @@ public class CustomerProductServiceImpl implements CustomerProductService {
         if (customerProductDaoList.isEmpty()) throw new NotFoundException("No cart items for this customer");
 
         customerProductRepository.deleteAll(customerProductDaoList);
+    }
+
+    @Override
+    public CustomerProductDto alterCartQuantity(Long cartId, String alter) throws IllegalAccessException {
+        CustomerProduct customerProduct = customerProductRepository.findById(cartId).get();
+
+        if (customerProduct == null) {
+            throw new NotFoundException(("No cart found for the given ID"));
+        }
+
+        //Validate the available stock amount for the given product before increase
+        ProductDto product = productService.getProduct(customerProduct.getProductDao().getId());
+
+        int currentQuantity = customerProduct.getQuantity();
+
+        //Increase
+        if (alter.equals("UP")) {
+            currentQuantity++;
+            if (product.getAvailableQuantity() < currentQuantity) {
+                throw new IllegalAccessException("Sorry Insufficent stock amount");
+            }
+            customerProduct.setQuantity(currentQuantity);
+        }
+        if(alter.equals("DOWN")){
+            currentQuantity--;
+            customerProduct.setQuantity(currentQuantity);
+        }
+
+        return mapper.getCustomerProductDto(customerProductRepository.save(customerProduct));
+
     }
 }

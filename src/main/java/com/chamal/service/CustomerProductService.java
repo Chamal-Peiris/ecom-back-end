@@ -16,4 +16,6 @@ public interface CustomerProductService {
 
     void deleteCustomerCart(Long customerId);
 
+    CustomerProductDto alterCartQuantity(Long cartId,String alter) throws IllegalAccessException;
+
 }

@@ -1,9 +1,9 @@
 package com.chamal.controller;
 
 import com.chamal.config.JwtTokenUtil;
-import com.chamal.dto.JwtRequest;
-import com.chamal.dto.JwtResponse;
-import com.chamal.dto.UserDto;
+import com.chamal.dto.*;
+import com.chamal.model.User;
+import com.chamal.service.CustomerService;
 import com.chamal.service.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +43,10 @@ public class JwtAuthenticationController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
 		return ResponseEntity.ok(userDetailsService.save(user));
+	}
+	@RequestMapping(value = "/register-customer", method = RequestMethod.POST)
+	public ResponseEntity<?> saveCustomer(@RequestBody CustomCustomerRegisterDto customCustomerRegisterDto) throws Exception {
+		return ResponseEntity.ok(userDetailsService.registerUserAndCustomer(customCustomerRegisterDto));
 	}
 
 	private void authenticate(String username, String password) throws Exception {

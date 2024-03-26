@@ -67,6 +67,23 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public CustomerDto saveCustomerForRegistration(CustomerDto customerDto, User user) {
+        Customer savedCustomer = customerRepository.findByUserDao(user);
+
+        if(savedCustomer!=null) throw new DuplicateRecordException("A customer record is already available for this user");
+
+        Customer customerDao = new Customer();
+        customerDao.setUserDao(user);
+        customerDao.setAddress(customerDto.getAddress());
+        customerDao.setFullName(customerDto.getFullName());
+        customerDao.setMobile(customerDto.getMobile());
+        customerDao.setEmail(customerDto.getEmail());
+
+        return mapper.getCustomerDto(customerRepository.save(customerDao));
+    }
+
+
+    @Override
     public CustomerDto update(CustomerDto customerDto) {
         Optional<Customer> customerDao = customerRepository.findById(customerDto.getId());
         if(!customerDao.isPresent()) throw new NotFoundException("No customer found for the provided id");

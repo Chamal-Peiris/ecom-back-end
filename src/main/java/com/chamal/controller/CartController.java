@@ -35,4 +35,8 @@ public class CartController {
         customerProductService.deleteCustomerCart(customerId);
         return ResponseEntity.ok().build();
     }
+    @PutMapping("/alter-cart-quantity")
+    public ResponseEntity alterCartQuantity(@RequestParam Long cartId,@RequestParam String alter) throws IllegalAccessException {
+        return ResponseEntity.ok(customerProductService.alterCartQuantity(cartId,alter));
+    }
 }

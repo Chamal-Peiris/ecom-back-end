@@ -1,6 +1,7 @@
 package com.chamal.service;
 
 import com.chamal.dto.CustomerDto;
+import com.chamal.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,8 @@ public interface CustomerService {
     CustomerDto getCustomer(Long customerId);
     List<CustomerDto> getCustomers();
     CustomerDto save(CustomerDto customerDto);
+
+    CustomerDto saveCustomerForRegistration(CustomerDto customerDto,User user);
 
     CustomerDto update(CustomerDto customerDto);
     void deleteCustomer(Long customerId);
