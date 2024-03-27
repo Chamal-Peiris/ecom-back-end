@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -62,12 +63,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// make sure we use stateless session; session won't be used to
 				// store user's state.
 						exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+       .and()
+				// Configure CORS
+				.cors().configurationSource(request -> {
+					CorsConfiguration corsConfig = new CorsConfiguration();
+					corsConfig.applyPermitDefaultValues();
+					corsConfig.addAllowedMethod(HttpMethod.PUT); // Allow PUT requests
+					return corsConfig;
+				})
+				.and();
 
 		// Add a filter to validate the tokens with every request
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		httpSecurity.headers().frameOptions().disable();
-		httpSecurity.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+
 	}
 
 
