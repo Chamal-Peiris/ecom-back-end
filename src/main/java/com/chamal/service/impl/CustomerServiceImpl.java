@@ -1,5 +1,6 @@
 package com.chamal.service.impl;
 
+import com.chamal.dto.CustomCustomerRegisterDto;
 import com.chamal.dto.CustomerDto;
 import com.chamal.model.Customer;
 import com.chamal.model.User;
@@ -33,7 +34,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto getCustomer(Long customerId) {
         Optional<Customer> customerDao = customerRepository.findById(customerId);
-
         if(!customerDao.isPresent()) throw new NotFoundException("No customer found for the given id");
 
         return mapper.getCustomerDto(customerDao.get());
@@ -103,8 +103,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDto me() {
+    public CustomCustomerRegisterDto me() {
         User loggedUser = jwtUserDetailsService.getLoggedUser();
-        return mapper.getCustomerDto(customerRepository.findByUserDao(loggedUser));
+        Customer customer = customerRepository.findByUserDao(loggedUser);
+        CustomCustomerRegisterDto customCustomerRegisterDto = new CustomCustomerRegisterDto();
+
+        customCustomerRegisterDto.setCustomer(mapper.getCustomerDto(customer));
+        customCustomerRegisterDto.setUser(mapper.getUserDto(loggedUser));
+        return customCustomerRegisterDto;
     }
 }

@@ -1,5 +1,6 @@
 package com.chamal.service;
 
+import com.chamal.dto.CustomCustomerRegisterDto;
 import com.chamal.dto.CustomerDto;
 import com.chamal.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,5 +18,7 @@ public interface CustomerService {
 
     CustomerDto update(CustomerDto customerDto);
     void deleteCustomer(Long customerId);
-    CustomerDto me();
+    CustomCustomerRegisterDto me();
+
+
 }
