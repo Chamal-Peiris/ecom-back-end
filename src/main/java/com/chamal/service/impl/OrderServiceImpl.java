@@ -14,17 +14,27 @@ import com.chamal.service.CustomerService;
 import com.chamal.service.OrderService;
 import com.chamal.service.exception.NotFoundException;
 import com.chamal.service.util.EntityDtoConverter;
-import lombok.val;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
+import java.net.URI;
 import java.sql.Array;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
 public class OrderServiceImpl implements OrderService {
-
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
     private CustomerService customerService;
     private EntityDtoConverter mapper;
     private OrderRepository orderRepository;
@@ -70,6 +80,39 @@ public class OrderServiceImpl implements OrderService {
 
         customerProductService.deleteCustomerCart(customerId);
 
+
+        //Trigger an email to customer after placing the order
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("customerName",savedOrder.getCustomer().getFullName());
+        requestMap.put("orderTotal",savedOrder.getOrderTotal());
+        requestMap.put("orderStatus",savedOrder.getOrderStatus());
+        requestMap.put("email",savedOrder.getEmail());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(savedOrder.getOrderPlacedDate());
+
+        requestMap.put("orderPlacedDate",formattedDate);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Auth","qazwsxedc");
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestMap, headers);
+        try{
+            URI uri = new URI("https://prod-33.southeastasia.logic.azure.com:443/workflows/57de1a2a49e9466ab8a540fd33fbb3e0/triggers/manual/paths/invoke");
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri)
+                    .queryParam("api-version","2016-06-01")
+                    .queryParam("sp","/triggers/manual/run")
+                    .queryParam("sv","1.0")
+                    .queryParam("sig","RoDgAhHHketwPVB5TpbtK4PXWjZqWPCQkkNTsk1UZls");
+
+            RestTemplate restTemplate=new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(builder.build().toUri(), HttpMethod.POST,entity, String.class);
+        } catch (Exception e){
+            logger.error("#### Error caused in mail server :{}####",e.getMessage());
+        }
+
         return new OrderDto(savedOrder, mapper.getCustomerDto(savedOrder.getCustomer()));
     }
 
@@ -107,8 +150,15 @@ public class OrderServiceImpl implements OrderService {
                 customOrderDto.setOrderPlacedDate(order.getOrderPlacedDate());
                 customOrderDto.setDeliveryAddress(order.getShippingAddress());
                 customOrderDto.setOrderItems(mapper.getOrderItemnDtoList(order.getOrderItemDaos()));
+                customOrderDto.setCustomerName(order.getCustomer().getFullName());
                 customOrderDtoList.add(customOrderDto);
             }
+        }
+        //Sort list in desc only for customers
+        if(customerId!=null){
+          customOrderDtoList =  customOrderDtoList.stream()
+                    .sorted(Comparator.comparingLong(CustomOrderDto::getId).reversed())
+                    .collect(Collectors.toList());
         }
         return customOrderDtoList;
     }

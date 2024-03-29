@@ -20,5 +20,6 @@ public class CustomOrderDto implements Serializable {
     private Double orderTotal;
     private Boolean shipped;
     private Long customerId;
+    private String customerName;
     private Set<OrderItemDto> orderItems;
 }
