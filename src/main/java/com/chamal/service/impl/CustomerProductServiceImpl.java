@@ -6,15 +6,18 @@ import com.chamal.model.Customer;
 import com.chamal.model.CustomerProduct;
 import com.chamal.model.Product;
 import com.chamal.repository.CustomerProductRepository;
+import com.chamal.repository.ProductRepository;
 import com.chamal.service.CustomerProductService;
 import com.chamal.service.CustomerService;
 import com.chamal.service.ProductService;
 import com.chamal.service.exception.GenericEcomException;
 import com.chamal.service.exception.NotFoundException;
 import com.chamal.service.util.EntityDtoConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +31,9 @@ public class CustomerProductServiceImpl implements CustomerProductService {
     private ProductService productService;
     private CustomerProductRepository customerProductRepository;
     private EntityDtoConverter mapper;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     public CustomerProductServiceImpl(CustomerService customerService, ProductService productService, CustomerProductRepository customerProductRepository, EntityDtoConverter mapper) {
         this.customerService = customerService;
@@ -82,6 +88,10 @@ public class CustomerProductServiceImpl implements CustomerProductService {
     public void removeProduct(Long customerId, Long productId) {
         CustomerProduct cpDao = customerProductRepository.findByCustomerDaoAndProductDao(mapper.getCustomerDao(customerService.getCustomer(customerId)), mapper.getProductDao(productService.getProduct(productId)));
         if(cpDao==null) throw new NotFoundException("No cart avaialble, either the given customer id or product id is wrong");
+        int quantityToBeAddedToStock = cpDao.getQuantity();
+        Product productDao = cpDao.getProductDao();
+        productDao.setAvailableQuantity(productDao.getAvailableQuantity()+quantityToBeAddedToStock);
+        productRepository.save(productDao);
         customerProductRepository.delete(cpDao);
     }
 
@@ -104,6 +114,14 @@ public class CustomerProductServiceImpl implements CustomerProductService {
 
         if (customerProductDaoList.isEmpty()) throw new NotFoundException("No cart items for this customer");
 
+        List<Product> productList = new ArrayList<>();
+        for (CustomerProduct customerProduct : customerProductDaoList) {
+            int quantityToBeAddedToStock = customerProduct.getQuantity();
+            Product productDao = customerProduct.getProductDao();
+            productDao.setAvailableQuantity(productDao.getAvailableQuantity() + quantityToBeAddedToStock);
+            productList.add(productDao);
+        }
+        productRepository.saveAll(productList);
         customerProductRepository.deleteAll(customerProductDaoList);
     }
 
